@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Omaha & Playa del Coco Weather</title>
+<style>
+  :root {
+    --bg: #f4f6f8; --card: #ffffff; --text: #1d2733; --muted: #6b7785; --line: #e3e7eb; --accent: #2a6fdb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12161b; --card: #1b2128; --text: #e6ebf0; --muted: #93a0ad; --line: #2a323b; --accent: #6ea3ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 16px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: .9rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .card h2 { margin: 0; font-size: 1.2rem; }
+  .local { color: var(--muted); font-size: .85rem; margin: 2px 0 16px; }
+  .now { display: flex; align-items: center; gap: 16px; }
+  .icon { font-size: 3rem; line-height: 1; }
+  .temp { font-size: 3rem; font-weight: 600; }
+  .cond { color: var(--muted); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; font-size: .85rem; }
+  .stats div { background: var(--bg); border-radius: 8px; padding: 8px; text-align: center; }
+  .stats b { display: block; font-size: 1rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  td { padding: 6px 0; border-top: 1px solid var(--line); }
+  td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .lo { color: var(--muted); }
+  .section { font-size: 1.2rem; margin: 32px 0 12px; }
+  .cam { position: relative; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #000; }
+  .cam iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .btn { display: block; margin-top: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; background: var(--bg); }
+  .btn:hover { border-color: var(--accent); }
+  footer { margin-top: 24px; color: var(--muted); font-size: .8rem; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Weather: Omaha &amp; Playa del Coco</h1>
+  <p class="sub" id="updated">Loading…</p>
+  <div class="grid">
+    <section class="card" id="omaha"></section>
+    <section class="card" id="coco"></section>
+  </div>
+
+  <h2 class="section">Live cameras</h2>
+  <div class="grid">
+    <section class="card">
+      <h2>Omaha Traffic Cam</h2>
+      <p class="local">Live stream</p>
+      <div class="cam">
+        <iframe src="https://plyhearst.videstra.live/?id=0574c5b2-c2dc-42d5-bb39-1840ed2180bf&amp;token=vC7GmaGANGRcNx7cqgCXXCgGNAfFor38kSe4fhj93rImtAh0c8FRBbSUwNCmGEde" allowfullscreen loading="lazy" title="Omaha live camera"></iframe>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Tamarindo Surf Cam</h2>
+      <p class="local">Live stream</p>
+      <div class="cam">
+        <iframe src="https://v.angelcam.com/iframe?v=91yxk07kro&amp;autoplay=1" allowfullscreen loading="lazy" title="Tamarindo Surf Cam"></iframe>
+      </div>
+    </section>
+  </div>
+
+  <footer>Data from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>. Refreshes every 15 minutes.</footer>
+</main>
+
+<script>
+const PLACES = [
+  { id: "omaha", name: "Omaha, Nebraska", lat: 41.2565, lon: -95.9345, tz: "America/Chicago" },
+  { id: "coco",  name: "Playa del Coco, Costa Rica", lat: 10.5503, lon: -85.6983, tz: "America/Costa_Rica" }
+];
+
+const CODES = {
+  0: ["Clear", "☀️"], 1: ["Mostly clear", "🌤️"], 2: ["Partly cloudy", "⛅"], 3: ["Overcast", "☁️"],
+  45: ["Fog", "🌫️"], 48: ["Fog", "🌫️"],
+  51: ["Light drizzle", "🌦️"], 53: ["Drizzle", "🌦️"], 55: ["Heavy drizzle", "🌧️"],
+  56: ["Freezing drizzle", "🌧️"], 57: ["Freezing drizzle", "🌧️"],
+  61: ["Light rain", "🌦️"], 63: ["Rain", "🌧️"], 65: ["Heavy rain", "🌧️"],
+  66: ["Freezing rain", "🌧️"], 67: ["Freezing rain", "🌧️"],
+  71: ["Light snow", "🌨️"], 73: ["Snow", "🌨️"], 75: ["Heavy snow", "❄️"], 77: ["Snow grains", "🌨️"],
+  80: ["Rain showers", "🌦️"], 81: ["Rain showers", "🌧️"], 82: ["Heavy showers", "🌧️"],
+  85: ["Snow showers", "🌨️"], 86: ["Snow showers", "❄️"],
+  95: ["Thunderstorm", "⛈️"], 96: ["Thunderstorm, hail", "⛈️"], 99: ["Thunderstorm, hail", "⛈️"]
+};
+const code = c => CODES[c] || ["—", "🌡️"];
+
+async function load(p) {
+  const el = document.getElementById(p.id);
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}` +
+    `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
+    `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=${encodeURIComponent(p.tz)}&forecast_days=5`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    const c = d.current;
+    const [cond, icon] = code(c.weather_code);
+    const localTime = new Date().toLocaleTimeString("en-US", { timeZone: p.tz, hour: "numeric", minute: "2-digit" });
+    const rows = d.daily.time.map((t, i) => {
+      const day = i === 0 ? "Today" : new Date(t + "T12:00").toLocaleDateString("en-US", { weekday: "short" });
+      const [dc, di] = code(d.daily.weather_code[i]);
+      return `<tr><td>${day}</td><td>${di} ${dc}</td><td>${d.daily.precipitation_probability_max[i] ?? 0}% rain</td>
+        <td>${Math.round(d.daily.temperature_2m_max[i])}° <span class="lo">${Math.round(d.daily.temperature_2m_min[i])}°</span></td></tr>`;
+    }).join("");
+    el.innerHTML = `
+      <h2>${p.name}</h2>
+      <p class="local">Local time ${localTime}</p>
+      <div class="now">
+        <div class="icon">${icon}</div>
+        <div><div class="temp">${Math.round(c.temperature_2m)}°F</div><div class="cond">${cond}</div></div>
+      </div>
+      <div class="stats">
+        <div><b>${Math.round(c.apparent_temperature)}°</b>Feels like</div>
+        <div><b>${c.relative_humidity_2m}%</b>Humidity</div>
+        <div><b>${Math.round(c.wind_speed_10m)} mph</b>Wind</div>
+      </div>
+      <table>${rows}</table>`;
+  } catch (e) {
+    el.innerHTML = `<h2>${p.name}</h2><p class="local">Couldn't load weather. Try refreshing.</p>`;
+  }
+}
+
+function refresh() {
+  PLACES.forEach(load);
+  document.getElementById("updated").textContent =
+    "Updated " + new Date().toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+}
+refresh();
+setInterval(refresh, 15 * 60 * 1000);
+</script>
+</body>
+</html>

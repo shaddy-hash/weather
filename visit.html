@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Want to Visit Us?</title>
+<title>Come Visit Us!</title>
 <style>
   :root { --bg: #f4f6f8; --card: #ffffff; --text: #1d2733; --muted: #6b7785; --line: #e3e7eb; --accent: #2a6fdb; }
   @media (prefers-color-scheme: dark) {
@@ -24,14 +24,17 @@
   .sent .thanks { display: block; }
   .sent form { display: none; }
   a { color: var(--accent); }
+  .map { display: block; margin: -8px 0 20px; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; text-decoration: none; }
+  .map:hover { border-color: var(--accent); }
   .back { display: inline-block; margin-bottom: 16px; font-size: .9rem; }
 </style>
 </head>
 <body>
 <main>
   <a class="back" href="./">← Back to weather</a>
-  <h1>Want to Visit Us?</h1>
+  <h1>Come Visit Us!</h1>
   <p class="sub">Tell us the dates you're thinking about and we'll get back to you.</p>
+  <a class="map" href="https://www.google.com/maps/search/?api=1&amp;query=H825%2BF5%20Coco%2C%20Guanacaste%2C%20Costa%20Rica" target="_blank" rel="noopener">📍 See where we'll be in Playas del Coco (Google Maps) ↗</a>
   <div class="card">
     <div class="thanks">
       <h2>Thanks!</h2>

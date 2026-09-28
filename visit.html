@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Want to Visit Us?</title>
+<style>
+  :root { --bg: #f4f6f8; --card: #ffffff; --text: #1d2733; --muted: #6b7785; --line: #e3e7eb; --accent: #2a6fdb; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12161b; --card: #1b2128; --text: #e6ebf0; --muted: #93a0ad; --line: #2a323b; --accent: #6ea3ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  main { max-width: 560px; margin: 0 auto; padding: 32px 16px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: .95rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  label { display: block; font-size: .9rem; font-weight: 600; margin: 0 0 6px; }
+  input, textarea { width: 100%; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; }
+  input:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  button { width: 100%; font: inherit; font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 8px; padding: 12px; cursor: pointer; }
+  .thanks { display: none; }
+  .sent .thanks { display: block; }
+  .sent form { display: none; }
+  a { color: var(--accent); }
+  .back { display: inline-block; margin-bottom: 16px; font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="./">← Back to weather</a>
+  <h1>Want to Visit Us?</h1>
+  <p class="sub">Tell us the dates you're thinking about and we'll get back to you.</p>
+  <div class="card">
+    <div class="thanks">
+      <h2>Thanks!</h2>
+      <p>We got your dates and will be in touch soon.</p>
+    </div>
+    <form action="https://formsubmit.co/ashaddy@gmail.com" method="POST">
+      <input type="hidden" name="_cc" value="rshaddy@gmail.com">
+      <input type="hidden" name="_subject" value="New visit request">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="https://shaddy-hash.github.io/weather/visit.html?sent=1">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+      <div class="row">
+        <div>
+          <label for="arrive">Arrival date</label>
+          <input type="date" id="arrive" name="Arrival date" required>
+        </div>
+        <div>
+          <label for="depart">Departure date</label>
+          <input type="date" id="depart" name="Departure date" required>
+        </div>
+      </div>
+
+      <label for="name">Your name</label>
+      <input type="text" id="name" name="Name" required>
+
+      <label for="email">Your email</label>
+      <input type="email" id="email" name="email" required>
+
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</main>
+<script>
+  if (new URLSearchParams(location.search).has("sent")) document.body.classList.add("sent");
+  const a = document.getElementById("arrive"), d = document.getElementById("depart");
+  const today = new Date().toISOString().slice(0, 10);
+  a.min = today; d.min = today;
+  a.addEventListener("change", () => { d.min = a.value; if (d.value && d.value < a.value) d.value = a.value; });
+</script>
+</body>
+</html>

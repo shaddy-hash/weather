@@ -44,7 +44,7 @@
       <input type="hidden" name="_cc" value="rshaddy@gmail.com">
       <input type="hidden" name="_subject" value="New visit request">
       <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_next" value="https://shaddy-hash.github.io/weather/visit.html?sent=1">
+      <input type="hidden" name="_next" id="next" value="https://shaddy-hash.github.io/weather/flights.html">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 
       <div class="row">
@@ -74,6 +74,10 @@
   const today = new Date().toISOString().slice(0, 10);
   a.min = today; d.min = today;
   a.addEventListener("change", () => { d.min = a.value; if (d.value && d.value < a.value) d.value = a.value; });
+  document.querySelector("form").addEventListener("submit", () => {
+    document.getElementById("next").value =
+      "https://shaddy-hash.github.io/weather/flights.html?arrive=" + a.value + "&depart=" + d.value;
+  });
 </script>
 </body>
 </html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find Flights</title>
+<style>
+  :root { --bg: #f4f6f8; --card: #ffffff; --text: #1d2733; --muted: #6b7785; --line: #e3e7eb; --accent: #2a6fdb; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12161b; --card: #1b2128; --text: #e6ebf0; --muted: #93a0ad; --line: #2a323b; --accent: #6ea3ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  main { max-width: 560px; margin: 0 auto; padding: 32px 16px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; font-size: .95rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  label { display: block; font-size: .9rem; font-weight: 600; margin: 0 0 6px; }
+  input { width: 100%; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; }
+  input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .to { color: var(--muted); font-size: .9rem; margin: -4px 0 16px; }
+  button { width: 100%; font: inherit; font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 8px; padding: 12px; cursor: pointer; }
+  a { color: var(--accent); }
+  .skip { display: block; text-align: center; margin-top: 16px; font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Thanks! We got your dates.</h1>
+  <p class="sub">Want to look at flights? Tell us where you're flying from.</p>
+  <div class="card">
+    <form id="f">
+      <label for="from">Departure city</label>
+      <input type="text" id="from" placeholder="e.g. Omaha or OMA" required>
+      <p class="to">Flying to: Liberia, Costa Rica (LIR) — round trip</p>
+
+      <div class="row">
+        <div>
+          <label for="out">Depart</label>
+          <input type="date" id="out" required>
+        </div>
+        <div>
+          <label for="back">Return</label>
+          <input type="date" id="back" required>
+        </div>
+      </div>
+
+      <button type="submit">Search Google Flights ↗</button>
+    </form>
+  </div>
+  <a class="skip" href="./">No thanks — back to the main page</a>
+</main>
+<script>
+  const p = new URLSearchParams(location.search);
+  const out = document.getElementById("out"), back = document.getElementById("back");
+  if (p.get("arrive")) out.value = p.get("arrive");
+  if (p.get("depart")) back.value = p.get("depart");
+  out.addEventListener("change", () => { back.min = out.value; if (back.value && back.value < out.value) back.value = out.value; });
+  document.getElementById("f").addEventListener("submit", e => {
+    e.preventDefault();
+    const from = document.getElementById("from").value.trim();
+    const q = `Flights from ${from} to LIR on ${out.value} through ${back.value}`;
+    window.open("https://www.google.com/travel/flights?q=" + encodeURIComponent(q), "_blank", "noopener");
+  });
+</script>
+</body>
+</html>

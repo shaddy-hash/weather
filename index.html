@@ -52,10 +52,11 @@
   <h1>Weather: Omaha &amp; Playa del Coco</h1>
   <p class="sub" id="updated">Loading…</p>
   <section class="card countdown">
-    <div class="cd-head"><b id="cd-days">–</b><span>days until arrival</span></div>
+    <div class="cd-head"><b id="cd-days">–</b><span id="cd-label">days until we head back to Omaha</span></div>
     <div class="bar"><div class="fill" id="cd-fill"></div></div>
-    <div class="cd-ends"><span>Sep 25</span><span>Oct 31</span></div>
+    <div class="cd-ends"><span>Arrived Oct 31</span><span>Back to Omaha Apr 30</span></div>
     <a class="btn" href="visit.html">Come Visit Us! →</a>
+    <a class="btn" href="https://www.google.com/maps/place/H825%2BF5,+Provincia+de+Guanacaste,+Coco,+Costa+Rica/@10.5511928,-85.6946428,904m/data=!3m2!1e3!4b1!4m5!3m4!1s0x8f9e2977ec2df551:0x5e296c232020263f!8m2!3d10.5511875!4d-85.6920625?entry=ttu&amp;g_ep=EgoyMDI2MDkyMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">📍 Where we're staying (Google Maps) ↗</a>
   </section>
   <div class="grid">
     <section class="card" id="omaha"></section>
@@ -141,11 +142,13 @@ async function load(p) {
 }
 
 function countdown() {
-  const start = new Date("2026-09-25T00:00:00-05:00");
-  const end = new Date("2026-10-31T00:00:00-05:00");
+  const start = new Date("2026-10-31T00:00:00-05:00");
+  const end = new Date("2027-04-30T00:00:00-05:00");
   const now = new Date();
-  const days = Math.max(0, Math.ceil((end - now) / 86400000));
+  const before = now < start;
+  const days = Math.max(0, Math.ceil(((before ? start : end) - now) / 86400000));
   const pct = Math.min(100, Math.max(0, (now - start) / (end - start) * 100));
+  document.getElementById("cd-label").textContent = before ? "days until arrival" : "days until we head back to Omaha";
   document.getElementById("cd-days").textContent = days;
   document.getElementById("cd-fill").style.width = pct + "%";
 }
